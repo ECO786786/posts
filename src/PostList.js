@@ -14,7 +14,7 @@ export const PostList = ({ posts, onLike, onDelete, onEdit }) => {
                 Like ({post.likes})
               </button>
               <button onClick={() => onDelete(post.id)}>Delete</button>
-              <button onClick={(e) => onEdit(post.content)}>Edit</button>
+              <button onClick={() => onEdit(post.content)}>Edit</button>
             </div>
           </div>
         ))
