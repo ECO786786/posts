@@ -1,24 +1,38 @@
 import { useState } from "react";
 
+const MAX_LENGTH = 280;
+
+// post.utilty.js
+
+// date.util.js
+
+// DRY: dont repeat yourself
+
+const createPost = (username, content) => {
+  return {
+    id: Date.now(),
+    username: username,
+    content: content,
+    timestamp: new Date(Date.now() - 15 * 60 * 1000),
+    likes: 0,
+  };
+};
+
 export function PostForm({ onAddPost }) {
   const [content, setContent] = useState("");
-  const [usename, setUsername] = useState("");
-  const maxLength = 280;
+  const [username, setUsername] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(e);
-    if (e.target.value === "" || e.target[0].value.length > 280) {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    // event.target[0]
+
+    if (content === "" || content.length > 280) {
       alert("Please enter text");
     } else {
-      const newPost = {
-        id: Date.now(),
-        username: usename,
-        content: content,
-        timestamp: new Date(Date.now() - 15 * 60 * 1000),
-        likes: 0,
-      };
+      const newPost = createPost(username, content);
       onAddPost(newPost);
+
       setContent("");
       setUsername("");
     }
@@ -29,19 +43,19 @@ export function PostForm({ onAddPost }) {
       <input
         type="text"
         placeholder="username"
-        value={usename}
-        onChange={(e) => setUsername(e.target.value)}
+        value={username}
+        onChange={(inputEvent) => setUsername(inputEvent.target.value)}
       />
       <textarea
         value={content}
-        onChange={(e) => setContent(e.target.value)}
-        maxLength={maxLength}
+        onChange={(textareaEvent) => setContent(textareaEvent.target.value)}
+        maxLength={MAX_LENGTH}
         placeholder="What's happening?"
         rows={3}
       />
       <div>
         <span>
-          {content.length}/{maxLength}
+          {content.length}/{MAX_LENGTH}
         </span>
         <button type="submit" disabled={!content.trim()}>
           Post

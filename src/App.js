@@ -21,6 +21,12 @@ const initialPosts = [
 
 export default function App() {
   const [posts, setPosts] = useState(initialPosts);
+
+  // to change pposts array
+  // posts = [a,b,b,c]; //
+
+  // setPostss([..,,..])
+
   const [filteredPosts, setFilteredPosts] = useState(initialPosts);
   const [filter, setFilter] = useState({ username: "", sortBy: "newest" });
   const [filterLikes, setFilterLikes] = useState({
@@ -45,10 +51,10 @@ export default function App() {
     setPosts((posts) => posts.filter((post) => post.id !== postId));
   };
 
-  const handleEdit = (postContent) => {
+  const handleEdit = (postId, newContent) => {
     setPosts((prev) =>
       prev.map((post) =>
-        post.content === postContent ? { ...post, content: postContent } : post
+        post.id === postId ? { ...post, content: newContent } : post
       )
     );
   };
@@ -65,7 +71,7 @@ export default function App() {
 
   const onSortLikes = (event) => {
     const sortBy = event.target.value;
-    setFilterLikes({ ...filter, sortBy });
+    setFilterLikes({ ...filterLikes, sortBy });
   };
 
   useEffect(() => {
@@ -73,7 +79,13 @@ export default function App() {
     const { username, sortBy } = filter;
 
     // copy the original posts array
+
+    // 1. create a copy of the data stored in the state
     const postsCopy = [...posts];
+
+    // 2. work with the copy, change, update, delete, remote, filter, etc.
+
+    // 3. let React know about this change, by calling the setStateHandlers
 
     let filteredByUsername;
 
@@ -82,6 +94,23 @@ export default function App() {
       filteredByUsername = postsCopy.filter((post) =>
         post.username.toLowerCase().includes(username.toLowerCase())
       );
+
+      // filter by lineId
+      // cuisedFiltered = cruises.filter(
+      //   (cruise) => cruise.linedId === "whaterver"
+      // );
+
+      // cosnt[(isVIP, setIsVip)] = iuseState();
+
+      // {
+      //   isVIP && <input type="text" required value={vipEmailAddress} />;
+      // }
+
+      // if (isVIP && vipEmailAddress !== "") {
+      //   // process the vip email here
+      // } else {
+      //   // email 2
+      // }
     } else if (username.trim() !== username) {
       filteredByUsername = [];
     } else {
@@ -99,18 +128,33 @@ export default function App() {
       return 0;
     });
 
+    // 1. posts in the state: posts[]
+    // 2. copy it postsCopy[]
+    // 3. filter it by username: filteredByUsername[]
+    // 4. sort by newest or oldest: sortedPosts[]
+    // 5. update the state with sortedPosts
+
+    // update the state
+    // setFilteredPosts(sortedPosts);
+
+    const { sortBy: sortByLikes } = filterLikes;
     const sortLikes = [...filteredByUsername].sort((a, b) => {
-      console.log(a, b, "ab");
-      if (sortBy === "mostliked") {
+      if (sortByLikes === "mostliked") {
         return b.likes - a.likes;
-      } else if (sortBy === "leastliked") {
+      } else if (sortByLikes === "leastliked") {
         return a.likes - b.likes;
       }
       return 0;
     });
 
-    setFilteredPosts(sortedPosts);
-    setFilterLikes(sortLikes);
+    setFilteredPosts(sortLikes);
+    // setFilterLikes(sortLikes);
+
+    // 1. posts in the state: posts[]
+    // 2. copy it postsCopy[]
+    // 3. filter it by username: filteredByUsername[]
+    // 4. sort the posts by likes: sortLikes[]
+    // 5. update the state with sortLikes[]
 
     setTimeout(() => {
       setLoading(false);
@@ -141,11 +185,12 @@ export default function App() {
 
           <div>
             <select value={filterLikes.sortBy} onChange={onSortLikes}>
-              {(console.log(filterLikes.sortBy), "sort by")}
               <option value="mostliked">most liked</option>
               <option value="leastliked">least liked</option>
             </select>
           </div>
+
+          {/* <SortByLikes /> */}
 
           <PostList
             posts={filteredPosts}
