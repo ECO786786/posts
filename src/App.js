@@ -21,17 +21,11 @@ const initialPosts = [
 
 export default function App() {
   const [posts, setPosts] = useState(initialPosts);
-
-  // to change pposts array
-  // posts = [a,b,b,c]; //
-
-  // setPostss([..,,..])
-
   const [filteredPosts, setFilteredPosts] = useState(initialPosts);
-  const [filter, setFilter] = useState({ username: "", sortBy: "newest" });
-  const [filterLikes, setFilterLikes] = useState({
+  const [filter, setFilter] = useState({
     username: "",
-    sortBy: "mostliked",
+    sortByTime: "",
+    sortByLikes: "",
   });
   const [loading, setLoading] = useState(true);
 
@@ -64,19 +58,19 @@ export default function App() {
     setFilter({ ...filter, username });
   };
 
-  const onSortChange = (event) => {
-    const sortBy = event.target.value;
-    setFilter({ ...filter, sortBy });
+  const onSortTimeChange = (event) => {
+    const sortByTime = event.target.value;
+    setFilter({ ...filter, sortByTime });
   };
 
-  const onSortLikes = (event) => {
-    const sortBy = event.target.value;
-    setFilterLikes({ ...filterLikes, sortBy });
+  const onSortLikesChange = (event) => {
+    const sortByLikes = event.target.value;
+    setFilter({ ...filter, sortByLikes });
   };
 
   useEffect(() => {
     // extract filter values into variables
-    const { username, sortBy } = filter;
+    const { username, sortByTime, sortByLikes } = filter;
 
     // copy the original posts array
 
@@ -94,23 +88,6 @@ export default function App() {
       filteredByUsername = postsCopy.filter((post) =>
         post.username.toLowerCase().includes(username.toLowerCase())
       );
-
-      // filter by lineId
-      // cuisedFiltered = cruises.filter(
-      //   (cruise) => cruise.linedId === "whaterver"
-      // );
-
-      // cosnt[(isVIP, setIsVip)] = iuseState();
-
-      // {
-      //   isVIP && <input type="text" required value={vipEmailAddress} />;
-      // }
-
-      // if (isVIP && vipEmailAddress !== "") {
-      //   // process the vip email here
-      // } else {
-      //   // email 2
-      // }
     } else if (username.trim() !== username) {
       filteredByUsername = [];
     } else {
@@ -119,14 +96,6 @@ export default function App() {
     }
 
     // sort posts based on the sortBy filter
-    const sortedPosts = [...filteredByUsername].sort((a, b) => {
-      if (sortBy === "newest") {
-        return new Date(b.timestamp) - new Date(a.timestamp);
-      } else if (sortBy === "oldest") {
-        return new Date(a.timestamp) - new Date(b.timestamp);
-      }
-      return 0;
-    });
 
     // 1. posts in the state: posts[]
     // 2. copy it postsCopy[]
@@ -137,17 +106,25 @@ export default function App() {
     // update the state
     // setFilteredPosts(sortedPosts);
 
-    const { sortBy: sortByLikes } = filterLikes;
-    const sortLikes = [...filteredByUsername].sort((a, b) => {
-      if (sortByLikes === "mostliked") {
-        return b.likes - a.likes;
-      } else if (sortByLikes === "leastliked") {
-        return a.likes - b.likes;
-      }
-      return 0;
-    });
+    if (sortByTime === "newest") {
+      filteredByUsername.sort(
+        (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+      );
+    } else if (sortByTime === "oldest") {
+      filteredByUsername.sort(
+        (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+      );
+    }
 
-    setFilteredPosts(sortLikes);
+    // Then sort by likes
+    if (sortByLikes === "mostliked") {
+      filteredByUsername.sort((a, b) => b.likes - a.likes);
+    } else if (sortByLikes === "leastliked") {
+      filteredByUsername.sort((a, b) => a.likes - b.likes);
+    }
+
+    setFilteredPosts(filteredByUsername);
+
     // setFilterLikes(sortLikes);
 
     // 1. posts in the state: posts[]
@@ -176,15 +153,14 @@ export default function App() {
           />
 
           <div>
-            {/* <div>Sortby value in state: {filter.sortBy}</div> */}
-            <select value={filter.sortBy} onChange={onSortChange}>
+            <select value={filter.sortByTime} onChange={onSortTimeChange}>
               <option value="newest">newest</option>
               <option value="oldest">oldest</option>
             </select>
           </div>
 
           <div>
-            <select value={filterLikes.sortBy} onChange={onSortLikes}>
+            <select value={filter.sortByLikes} onChange={onSortLikesChange}>
               <option value="mostliked">most liked</option>
               <option value="leastliked">least liked</option>
             </select>
